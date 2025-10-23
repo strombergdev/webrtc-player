@@ -118,6 +118,9 @@ export class WebRTCPlayer extends EventEmitter {
     if (this.peer.connectionState === 'failed') {
       this.emit(Message.PEER_CONNECTION_FAILED);
       this.peer && this.peer.close();
+      // Ensure the video element resets before attempting reconnect
+      this.videoElement.srcObject = null;
+      this.videoElement.load();
 
       if (this.reconnectAttemptsLeft <= 0) {
         this.error('Connection failed, reconnecting failed');
@@ -142,6 +145,7 @@ export class WebRTCPlayer extends EventEmitter {
       case 'reconnectneeded':
         this.peer && this.peer.close();
         this.videoElement.srcObject = null;
+        this.videoElement.load();
         this.setupPeer();
         this.adapter.resetPeer(this.peer);
         this.adapter.connect();
@@ -149,11 +153,14 @@ export class WebRTCPlayer extends EventEmitter {
       case 'connectionfailed':
         this.peer && this.peer.close();
         this.videoElement.srcObject = null;
+        this.videoElement.load();
         this.emit(Message.INITIAL_CONNECTION_FAILED);
         break;
       case 'connecterror':
         this.peer && this.peer.close();
         this.adapter.resetPeer(this.peer);
+        this.videoElement.srcObject = null;
+        this.videoElement.load();
         this.emit(Message.CONNECT_ERROR);
         break;
     }
