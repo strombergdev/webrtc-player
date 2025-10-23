@@ -208,6 +208,12 @@ export class WHEPAdapter implements Adapter {
         headers,
         body: ''
       });
+      // Treat 204 No Content as stream not ready
+      if (response.status === 204) {
+        this.log('WHEP 204 No Content – stream not ready');
+        this.onErrorHandler('connectionfailed');
+        throw new Error('WHEP 204 No Content');
+      }
       if (response.ok) {
         this.resource = this.getResouceUrlFromHeaders(response.headers);
         this.log('WHEP Resource', this.resource);
@@ -265,7 +271,12 @@ export class WHEPAdapter implements Adapter {
         headers,
         body: offer.sdp
       });
-
+      // Treat 204 No Content as stream not ready
+      if (response.status === 204) {
+        this.log('WHEP 204 No Content – stream not ready');
+        this.onErrorHandler('connectionfailed');
+        return;
+      }
       if (response.ok) {
         this.resource = this.getResouceUrlFromHeaders(response.headers);
         this.log('WHEP Resource', this.resource);

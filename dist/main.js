@@ -285,6 +285,12 @@ class $4c7e7e20a6e4dde3$export$e35e1b35ea68c1 {
                 headers: headers,
                 body: ""
             });
+            // Treat 204 No Content as stream not ready
+            if (response.status === 204) {
+                this.log("WHEP 204 No Content – stream not ready");
+                this.onErrorHandler("connectionfailed");
+                throw new Error("WHEP 204 No Content");
+            }
             if (response.ok) {
                 this.resource = this.getResouceUrlFromHeaders(response.headers);
                 this.log("WHEP Resource", this.resource);
@@ -335,6 +341,12 @@ class $4c7e7e20a6e4dde3$export$e35e1b35ea68c1 {
                 headers: headers,
                 body: offer.sdp
             });
+            // Treat 204 No Content as stream not ready
+            if (response.status === 204) {
+                this.log("WHEP 204 No Content – stream not ready");
+                this.onErrorHandler("connectionfailed");
+                return;
+            }
             if (response.ok) {
                 this.resource = this.getResouceUrlFromHeaders(response.headers);
                 this.log("WHEP Resource", this.resource);
