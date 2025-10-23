@@ -483,6 +483,9 @@ class $8c8737df5845fd96$export$f6039712bf1ca949 extends (0, $a1w4g$events.EventE
         if (this.peer.connectionState === "failed") {
             this.emit($8c8737df5845fd96$var$Message.PEER_CONNECTION_FAILED);
             this.peer && this.peer.close();
+            // Ensure the video element resets before attempting reconnect
+            this.videoElement.srcObject = null;
+            this.videoElement.load();
             if (this.reconnectAttemptsLeft <= 0) {
                 this.error("Connection failed, reconnecting failed");
                 return;
@@ -502,6 +505,7 @@ class $8c8737df5845fd96$export$f6039712bf1ca949 extends (0, $a1w4g$events.EventE
             case "reconnectneeded":
                 this.peer && this.peer.close();
                 this.videoElement.srcObject = null;
+                this.videoElement.load();
                 this.setupPeer();
                 this.adapter.resetPeer(this.peer);
                 this.adapter.connect();
@@ -509,11 +513,14 @@ class $8c8737df5845fd96$export$f6039712bf1ca949 extends (0, $a1w4g$events.EventE
             case "connectionfailed":
                 this.peer && this.peer.close();
                 this.videoElement.srcObject = null;
+                this.videoElement.load();
                 this.emit($8c8737df5845fd96$var$Message.INITIAL_CONNECTION_FAILED);
                 break;
             case "connecterror":
                 this.peer && this.peer.close();
                 this.adapter.resetPeer(this.peer);
+                this.videoElement.srcObject = null;
+                this.videoElement.load();
                 this.emit($8c8737df5845fd96$var$Message.CONNECT_ERROR);
                 break;
         }
